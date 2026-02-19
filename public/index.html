@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Payroll PDF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 flex items-center justify-center min-h-screen text-gray-900 font-sans p-6">
+
+    <!-- Card Container -->
+    <div class="bg-white w-full max-w-[450px] rounded-lg shadow-soft p-8 transition-all duration-200">
+
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-2xl font-semibold text-gray-900">Upload Payroll PDF</h1>
+            <p class="text-sm text-gray-500 mt-2">Select the master payroll file to process.</p>
+        </div>
+
+        <!-- Drop Zone -->
+        <div id="drop-zone"
+            class="relative border-2 border-dashed border-gray-300 rounded-lg p-10 text-center hover:border-blue-500 hover:bg-blue-50/50 transition-colors cursor-pointer group">
+            <input type="file" id="file-input" name="pdf" class="hidden" accept=".pdf">
+
+            <!-- Default Content -->
+            <div id="drop-content">
+                <!-- Icon -->
+                <div class="mx-auto h-12 w-12 text-gray-400 group-hover:text-blue-500 transition-colors mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-full h-full">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                </div>
+
+                <!-- Text -->
+                <p class="text-base font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
+                    Click to upload <span class="text-gray-400 font-normal">or drag and drop</span>
+                </p>
+                <p class="text-xs text-gray-400 mt-2">PDF files only</p>
+            </div>
+        </div>
+
+        <!-- File Info Display (Hidden by default) -->
+        <div id="file-info"
+            class="hidden mt-6 bg-gray-50 border border-gray-100 rounded-lg p-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3 overflow-hidden">
+                <div
+                    class="h-10 w-10 flex-shrink-0 bg-red-100 rounded-lg flex items-center justify-center text-red-500">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625zM7.5 15a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 017.5 15zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H8.25z"
+                            clip-rule="evenodd" />
+                        <path
+                            d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375h1.875c1.105 0 2.095.477 2.768 1.253A11.239 11.239 0 0013.26.732a7.514 7.514 0 00-.289 1.084z" />
+                    </svg>
+                </div>
+                <div class="flex flex-col min-w-0">
+                    <span id="file-name" class="text-sm font-medium text-gray-900 truncate block">filename.pdf</span>
+                    <span id="file-size" class="text-xs text-gray-500 block">0 KB</span>
+                </div>
+            </div>
+            <button id="remove-file"
+                class="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-gray-200">
+                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                        d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-msg"
+            class="hidden mt-4 items-center text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-100">
+            <svg class="h-4 w-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span id="error-text">Error message here</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button id="upload-btn" disabled
+            class="w-full mt-8 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-md shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none translate-y-0 active:translate-y-0.5">
+            Upload Payroll
+        </button>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Verify auth - redirect to login if not authenticated
+            try {
+                const authRes = await fetch('/api/auth/check', { credentials: 'same-origin' });
+                if (authRes.status === 401) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+            } catch (e) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('file-input');
+            const fileInfo = document.getElementById('file-info');
+            const fileNameSpan = document.getElementById('file-name');
+            const fileSizeSpan = document.getElementById('file-size');
+            const errorMsgContainer = document.getElementById('error-msg');
+            const errorText = document.getElementById('error-text');
+            const uploadBtn = document.getElementById('upload-btn');
+            const removeBtn = document.getElementById('remove-file');
+
+            let currentFile = null;
+
+            // --- Event Listeners ---
+
+            // Drag & Drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            // Visual feedback for drag
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    dropZone.classList.add('border-blue-500', 'bg-blue-50/50');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    dropZone.classList.remove('border-blue-500', 'bg-blue-50/50');
+                }, false);
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            });
+
+            // Click to upload
+            dropZone.addEventListener('click', () => {
+                fileInput.value = ''; // Reset to allow re-selecting same file
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', function () {
+                handleFiles(this.files);
+            });
+
+            // Remove file
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering dropzone click
+                resetState();
+            });
+
+            // Upload action
+            uploadBtn.addEventListener('click', async () => {
+                if (!currentFile) return;
+
+                await uploadFile(currentFile);
+            });
+
+            // --- Functions ---
+
+            function handleFiles(files) {
+                if (files.length === 0) return;
+
+                const file = files[0];
+                validateAndSetFile(file);
+            }
+
+            function validateAndSetFile(file) {
+                // Clear errors
+                hideError();
+
+                // Validate PDF (MIME type and extension)
+                const isPdfType = file.type === 'application/pdf';
+                const isPdfExt = file.name.toLowerCase().endsWith('.pdf');
+
+                if (!isPdfType && !isPdfExt) {
+                    showError('Invalid file type. Please upload a PDF file.');
+                    return;
+                }
+
+                // Set valid file
+                currentFile = file;
+                displayFileInfo(file);
+                enableButton();
+            }
+
+            function displayFileInfo(file) {
+                fileNameSpan.textContent = file.name;
+                fileSizeSpan.textContent = formatBytes(file.size);
+
+                fileInfo.classList.remove('hidden');
+                fileInfo.classList.add('flex');
+            }
+
+            function formatBytes(bytes, decimals = 2) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const dm = decimals < 0 ? 0 : decimals;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+
+            function showError(msg) {
+                errorText.textContent = msg;
+                errorMsgContainer.classList.remove('hidden');
+                errorMsgContainer.classList.add('flex');
+
+                // Reset file state if error
+                currentFile = null;
+                fileInfo.classList.add('hidden');
+                fileInfo.classList.remove('flex');
+                disableButton();
+            }
+
+            function hideError() {
+                errorMsgContainer.classList.add('hidden');
+                errorMsgContainer.classList.remove('flex');
+            }
+
+            function resetState() {
+                currentFile = null;
+                fileInput.value = '';
+
+                fileInfo.classList.add('hidden');
+                fileInfo.classList.remove('flex');
+
+                hideError();
+                disableButton();
+
+                uploadBtn.textContent = 'Upload Payroll';
+            }
+
+            function enableButton() {
+                uploadBtn.disabled = false;
+            }
+
+            function disableButton() {
+                uploadBtn.disabled = true;
+            }
+
+            // --- Upload Logic ---
+
+            async function uploadFile(file) {
+                // UI Loading State
+                disableButton();
+                const originalText = uploadBtn.textContent;
+                uploadBtn.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Uploading...
+                `;
+
+                try {
+                    const formData = new FormData();
+                    formData.append('pdf', file);
+
+                    const response = await fetch('/api/upload-master-pdf', {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'same-origin'
+                    });
+
+                    if (response.status === 401) {
+                        window.location.href = '/login.html';
+                        return;
+                    }
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Upload failed');
+                    }
+
+                    // Success State
+                    uploadBtn.innerHTML = `
+                        <svg class="h-5 w-5 text-white inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Processed: ${result.emails_sent} Sent, ${result.emails_failed} Failed
+                    `;
+                    uploadBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    uploadBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+
+                    // Reset after delay
+                    setTimeout(() => {
+                        resetState();
+                        uploadBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                        uploadBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                        uploadBtn.textContent = 'Upload Payroll';
+                    }, 5000);
+
+                } catch (err) {
+                    showError(err.message);
+                    uploadBtn.textContent = originalText;
+                    enableButton();
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

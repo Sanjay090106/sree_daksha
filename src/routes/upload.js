@@ -25,7 +25,23 @@ async function processRequest(req, res) {
     try {
         const pdfFile = req.files['pdf'] ? req.files['pdf'][0] : null;
         const mappingFile = req.files['mapping'] ? req.files['mapping'][0] : null;
-        const payMonth = req.body.pay_month || new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
+
+        // Determine Pay Month
+        // 1. Check Payload
+        let payMonth = req.body.pay_month;
+
+        // 2. Extract from Filename if missing
+        if (!payMonth && pdfFile) {
+            payMonth = extractMonthYear(pdfFile.originalname);
+            if (payMonth) {
+                console.log(`Extracted month from filename: ${payMonth}`);
+            }
+        }
+
+        // 3. Default to current month
+        if (!payMonth) {
+            payMonth = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
+        }
 
         if (!pdfFile) {
             return res.status(400).json({ error: 'Master PDF file is required' });
@@ -111,6 +127,55 @@ async function processRequest(req, res) {
         console.error("Batch processing error", error);
         res.status(500).json({ error: "Internal Server Error during batch processing" });
     }
+}
+
+
+/**
+ * Helper to extract Month and Year from filename
+ */
+function extractMonthYear(filename) {
+    if (!filename) return null;
+
+    // Regex to find Month (short/long) followed eventually by Year (2 or 4 digits)
+    // Matches: "mar-25", "March 2025", "jan_25", "february2026"
+    // Regex explanation:
+    // 1. Month name (captured)
+    // 2. Separators strings/chars (non-digits)
+    // 3. Year (2 or 4 digits) (captured)
+    const regex = /(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)[^0-9]*(\d{2,4})/i;
+
+    const match = filename.match(regex);
+    if (!match) return null;
+
+    let monthStr = match[1].toLowerCase();
+    const yearStr = match[2];
+
+    const monthMap = {
+        jan: 'January', january: 'January',
+        feb: 'February', february: 'February',
+        mar: 'March', march: 'March',
+        apr: 'April', april: 'April',
+        may: 'May',
+        jun: 'June', june: 'June',
+        jul: 'July', july: 'July',
+        aug: 'August', august: 'August',
+        sep: 'September', september: 'September',
+        oct: 'October', october: 'October',
+        nov: 'November', november: 'November',
+        dec: 'December', december: 'December'
+    };
+
+    // key might be 'jan' or 'january'.
+    const monthName = monthMap[monthStr];
+
+    if (!monthName) return null;
+
+    let year = parseInt(yearStr);
+    if (year < 100) {
+        year += 2000;
+    }
+
+    return `${monthName} ${year}`;
 }
 
 module.exports = router;
