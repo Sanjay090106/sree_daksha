@@ -6,6 +6,9 @@ const uploadRouter = require('./src/routes/upload');
 
 const app = express();
 
+// Trust proxy (required for sessions/cookies behind Render's HTTPS proxy)
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
