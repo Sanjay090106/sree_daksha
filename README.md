@@ -1,4 +1,4 @@
-# Dak PDF – Payroll PDF Distribution System
+# Payroll PDF Distribution System
 
 A web application that distributes payslips by splitting a master payroll PDF into individual pages and emailing each employee their payslip automatically.
 
