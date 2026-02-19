@@ -94,3 +94,38 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 │       └── pdfService.js   # PDF split & text extraction
 └── .env                   # Environment variables (not in git)
 ```
+
+## Deploy on Render
+
+1. **Push your code** to GitHub (ensure `.env` is in `.gitignore`).
+
+2. **Create a Render account** at [render.com](https://render.com).
+
+3. **New Web Service**
+   - Dashboard → **New** → **Web Service**
+   - Connect your GitHub repo
+   - Select your repository
+
+4. **Configure**
+   - **Runtime:** Node
+   - **Build Command:** `npm install`
+   - **Start Command:** `npm start`
+   - **Branch:** `main` (or your default branch)
+
+5. **Environment Variables** – Add these in the Render dashboard:
+   | Key | Value |
+   |-----|-------|
+   | `NODE_ENV` | `production` |
+   | `BREVO_API_KEY` | Your Brevo API key |
+   | `BREVO_SENDER_EMAIL` | Sender email address |
+   | `BREVO_SENDER_NAME` | Sender display name |
+   | `COMPANY_NAME` | Your company name |
+   | `AUTH_EMAIL` | Login email |
+   | `AUTH_PASSWORD` | Login password |
+   | `SESSION_SECRET` | Random string (or use Render's "Generate") |
+
+6. **Deploy** – Render will build and deploy. Your app will be at `https://<your-service>.onrender.com`.
+
+### Blueprint Deploy (Optional)
+
+If your repo has `render.yaml`, use **New** → **Blueprint** and connect the repo. Render creates the service from the blueprint. You’ll still enter secret values in the dashboard.

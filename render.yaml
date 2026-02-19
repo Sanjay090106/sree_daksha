@@ -1,0 +1,27 @@
+# Render Blueprint - https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: dak-pdf
+    runtime: node
+
+    buildCommand: npm install
+    startCommand: npm start
+
+    # Environment variables - add secrets in Render Dashboard
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: BREVO_API_KEY
+        sync: false
+      - key: BREVO_SENDER_EMAIL
+        sync: false
+      - key: BREVO_SENDER_NAME
+        sync: false
+      - key: COMPANY_NAME
+        sync: false
+      - key: AUTH_EMAIL
+        sync: false
+      - key: AUTH_PASSWORD
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
