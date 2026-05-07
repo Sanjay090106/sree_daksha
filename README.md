@@ -23,60 +23,6 @@ This lets you upload a single master PDF containing all employee payslips. The s
 - **Auth:** express-session
 - **Frontend:** HTML, Tailwind CSS, vanilla JavaScript
 
-## Setup
-
-### Prerequisites
-
-- Node.js (v18+)
-- A Brevo account and API key
-
-### Installation
-
-```bash
-npm install
-```
-
-### Environment Variables
-
-Create a `.env` file in the project root with:
-
-```env
-PORT=3000
-NODE_ENV=development
-
-# Brevo (Sendinblue) - for sending emails
-BREVO_API_KEY=your_brevo_api_key
-BREVO_SENDER_EMAIL=your@email.com
-BREVO_SENDER_NAME="Your Company Payroll"
-COMPANY_NAME="Your Company"
-
-# Authentication
-AUTH_EMAIL=admin@example.com
-AUTH_PASSWORD=your_password
-SESSION_SECRET=random-secret-string-for-sessions
-```
-
-### Run
-
-```bash
-npm start
-```
-
-For development with auto-reload:
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Usage
-
-1. Sign in with the configured email and password
-2. Upload the master payroll PDF (one page per employee)
-3. The system splits the PDF, extracts emails from each page, and sends individual payslips
-4. View the summary of sent and failed emails
-
 ## Project Structure
 
 ```
@@ -93,36 +39,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 │       ├── emailService.js # Brevo email sending
 │       └── pdfService.js   # PDF split & text extraction
 └── .env                   # Environment variables (not in git)
-```
-
-## Deploy on Render
-
-1. **Push your code** to GitHub (ensure `.env` is in `.gitignore`).
-
-2. **Create a Render account** at [render.com](https://render.com).
-
-3. **New Web Service**
-   - Dashboard → **New** → **Web Service**
-   - Connect your GitHub repo
-   - Select your repository
-
-4. **Configure**
-   - **Runtime:** Node
-   - **Build Command:** `npm install`
-   - **Start Command:** `npm start`
-   - **Branch:** `main` (or your default branch)
-
-5. **Environment Variables** – Add these in the Render dashboard:
-   | Key | Value |
-   |-----|-------|
-   | `NODE_ENV` | `production` |
-   | `BREVO_API_KEY` | Your Brevo API key |
-   | `BREVO_SENDER_EMAIL` | Sender email address |
-   | `BREVO_SENDER_NAME` | Sender display name |
-   | `COMPANY_NAME` | Your company name |
-   | `AUTH_EMAIL` | Login email |
-   | `AUTH_PASSWORD` | Login password |
-   | `SESSION_SECRET` | Random string (or use Render's "Generate") |
 
 6. **Deploy** – Render will build and deploy. Your app will be at `https://<your-service>.onrender.com`.
 
